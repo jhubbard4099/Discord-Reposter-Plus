@@ -6,7 +6,8 @@ const fs = require("fs");
 const Discord = require("discord.js");
 const client = new Discord.Client();
 
-client.login("<SECRET_BOT_TOKEN>").catch(console.error);
+process.loadEnvFile()
+client.login(process.env.SECRET_BOT_TOKEN).catch(console.error);
 
 client.on("ready", function() {
    const serverCount = client.guilds.cache.size;
@@ -194,6 +195,7 @@ const systemMessages = {
    GUILD_MEMBER_JOIN: " just joined."
 };
 
+// TODO: Add date/time stamping functionality
 async function sendMessage(message, channel, webhook, author) {
    if (inactive(channel.id, message.channel.id)) return;
    if (message.type !== "DEFAULT") {
