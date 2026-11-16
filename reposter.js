@@ -44,6 +44,42 @@ function capitalizeFirst(str) {
    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
+function timestampToString(timestamp) {
+   const date = new Date(timestamp);
+
+   const pad = (num) => String(num).padStart(2, '0');
+
+   const year = date.getFullYear();
+   const month = pad(date.getMonth() + 1); // Months are 0-indexed
+   const day = pad(date.getDate());
+   let hours = pad(date.getHours());   // Not constant so it can be updated later
+   const minutes = pad(date.getMinutes());
+   const seconds = pad(date.getSeconds());
+
+   // Convert to 12-hour time and calculate AM/PM meridiem
+   let meridiem = ""
+   if(hours == 0) 
+   {
+      hours = 12;
+      meridiem = "AM";
+   }
+   else if(hours == 12)
+   {
+      meridiem = "PM";
+   }
+   else if(hours > 12)
+   {
+      hours -= 12;
+      meridiem = "PM"
+   }
+   else // hours > 0 && < 12
+   {
+      meridiem = "AM"
+   }
+
+   return `${year}/${month}/${day} ${hours}:${minutes}:${seconds} ${meridiem} EST`;
+}
+
 function inactive(to, from) {
    return from ? !config.active[from] : !config.active[to];
 }
@@ -201,10 +237,16 @@ async function sendMessage(message, channel, webhook, author) {
    if (message.type !== "DEFAULT") {
       await channel.send(`**${replaceAll(channel, niceName(channel, message.channel, message.author))}${systemMessages[message.type]}**`).catch(console.error);
    } else if (message.author.id !== author) {
+      // Message break
+      await await channel.send(`**──────────────────────────────────**`).catch(console.error);
+
+      // Form date/time string
+      const timestampString = timestampToString(message.createdTimestamp)
+      
       if (webhook) {
          await webhook.edit(replaceAll(channel, niceName(channel, message.channel, message.author)), message.author.displayAvatarURL()).catch(console.error);
       } else {
-         await channel.send(`**${replaceAll(channel, niceName(channel, message.channel, message.author))}**`).catch(console.error);
+         await channel.send(`**${replaceAll(channel, niceName(channel, message.channel, message.author))} | ${timestampString}**`).catch(console.error);
       }
    }
    if (message.content) {

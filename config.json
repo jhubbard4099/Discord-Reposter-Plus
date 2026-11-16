@@ -2,8 +2,16 @@
 	"replacements": {},
 	"nicknames": {},
 	"prefixes": {},
-	"active": {},
+	"active": {
+		"1571539304554176562": true,
+		"1571970919801299105": true
+	},
 	"tags": {},
 	"pins": {},
-	"live": {}
+	"live": {
+		"1571970919801299105": {
+			"channel": "1571539304554176562",
+			"hook": false
+		}
+	}
 }
